@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Affari Tuoi</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.2em;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section h2 {
+      font-size: 2em;
+      margin-bottom: 10px;
+      border-left: 6px solid #3498db;
+      padding-left: 15px;
+    }
+
+    .section p {
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    .images-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .images-grid img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .images-grid img:hover {
+      transform: scale(1.03);
+    }
+
+    footer {
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 2em;
+      }
+
+      .section h2 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Affari Tuoi</h1>
+    <p>La creazione del gioco</p>
+  </header>
+
+  <div class="container">
+
+    <div class="section">
+      <h2>Descrizione del Progetto</h2>
+      <p>
+        Questo progetto è stato realizzato con l'obiettivo di unire le competenze acquisite durante i vari corsi svolti.<br>
+        Ho utilizzato tecnologie come HTML, CSS e Python per ottenere un risultato funzionale e visivamente efficace, come quello che stai vedendo.
+        L'intero processo ha incluso fasi di progettazione, sviluppo e test.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Perchè proprio "Affari Tuoi"?</h2>
+      <p>
+        Ho scelto di ricreare il celebre gioco "Affari Tuoi", perchè quest'ultimo è un gioco che regala forti emozioni e fa divertire le persone che ci giocano, purtroppo però è accessibile ai soli concorrenti in Tv. Per questo motivo, ho pensato che il compito di un programmatore è quello di offrire virtualmente delle esperienze che non tutti possono provare, così da unire più gente possibile e non far sentire nessuno escluso o diverso. 
+        Proprio per questo motivo ho deciso di ricreare in modo più realistico e preciso possibile, tutte le azioni che si possono fare:
+      </p>
+      <ul>
+        <li>La scelta del pacco</li>
+        <li>L'apertura dei pacchi</li>
+        <li>L'offerta da parte del Dottore</li>
+        <li>Il cambio del pacco</li>
+        <li>La possibilità di vedere i premi rimasti sul tabellone</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Immagini di Gioco</h2>
+      <p>Alcune immagini che mostrano il lavoro svolto:</p>
+      <div class="images-grid">
+        <img src="Inizio.png" alt="Inizio" />
+        <img src="Cambio.png" alt="Cambio" />
+        <img src="Offerta.png" alt="Offerta" />
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Codice del Gioco</h2>
+      <p>
+        Questo è il codice del gioco che ti consiglio di provare, per immedesimarti nei cncorrenti del celebre gioco "Affari Tuoi":
+      </p>
+      <pre>
+import tkinter as tk  # Creazione interfaccia grafica
+from tkinter import messagebox, simpledialog  # Per i popup informativi e la finestra di input
+import random  # Per mischiare il valore dei pacchi
+
+# Numero dei pacchi nel gioco
+n_pacchi = 20
+# Premi contenuti nei pacchi (lista)
+premi = [
+    0, 1, 5, 10, 20, 50, 75, 100, 200, 500,
+    5000, 10000, 15000, 20000, 30000, 50000, 75000, 100000, 200000, 300000
+]
+
+# Creazione classe per organizzare tutto il lavoro (root = tk.Tk() => finestra principale); init = interfaccia utente
+class AffariTuoiGame:
+
+    def __init__(self, root):
+        self.root = root
+        self.root.geometry("1100x800")  # Dimensioni aumentate per migliore visibilità
+        self.root.title("Affari Tuoi")  # Titolo
+        self.root.resizable(False, False)  # Blocco del ridimensionamento
+        self.root.configure(background="skyblue")  # Colore sfondo
+
+        self.package_buttons = {}  # Dizionario per i pulsanti
+        self.player_package = None  # Pacco scelto dal giocatore
+        self.opened_packages = []  # Pacchi aperti
+        self.packages = list(range(1, n_pacchi + 1))
+        self.remaining_prizes = premi.copy()
+        random.shuffle(self.remaining_prizes)
+        self.package_prize = dict(zip(self.packages, self.remaining_prizes))  # Assegnazione dei premi ai pacchi
+        self.turn = 1
+        self.package_switched = False  # Opzione per permettere solo un cambio pacco
+
+        # Creazione di un messaggio iniziale, ovvero di una casella input per il nome e un pulsante che mostra un saluto
+        self.info_label = tk.Label(root, text="Ciao, come ti chiami e da dove vieni?", font=("Verdana", 20), bg="skyblue")
+        self.info_label.pack(pady=10)
+
+        self.entry = tk.Entry(self.root, font=("Helvetica", 20), width=30)  # Aumenta la larghezza e la dimensione del testo
+        self.entry.pack(pady=5)
+
+        self.hello_button = tk.Button(text="Inizia il gioco!", command=self.first_print, font=("Helvetica", 14))
+        self.hello_button.pack(pady=10)
+
+        # Creazione pulsante per cambiare pacco (una sola volta)
+        self.change_button = tk.Button(
+            root,
+            text="🔄 CAMBIA PACCO",
+            command=self.change_package,
+            font=("Helvetica", 16, "bold"),
+            bg="#ffcc00",
+            fg="black",
+            relief="raised",
+            bd=5,
+            width=15,
+            height=1
+        )
+        self.change_button.pack(pady=15)  # Spazio maggiore tra il cambio e gli altri controlli
+
+        # Frame principale centrale
+        self.middle_frame = tk.Frame(root, bg="skyblue")
+        self.middle_frame.pack(pady=20)
+
+        # Creazione frame per i pacchi a sinistra
+        self.grid_frame = tk.Frame(self.middle_frame, bg="skyblue")
+        self.grid_frame.pack(side="left", padx=20)
+
+        self.create_package_buttons()
+
+        # Frame a destra: tabellone premi con cornice decorativa
+        self.prizes_frame = tk.LabelFrame(self.middle_frame, text="💰 Premi Rimasti", font=("Helvetica", 14, "bold"),
+                                          bg="skyblue", fg="#2c3e50", bd=3, relief="ridge", padx=10, pady=10)
+        self.prizes_frame.pack(side="right", padx=20)
+
+        self.left_column = tk.Frame(self.prizes_frame, bg="skyblue")
+        self.left_column.pack(side="left", padx=10)
+
+        self.right_column = tk.Frame(self.prizes_frame, bg="skyblue")
+        self.right_column.pack(side="right", padx=10)
+
+        self.prize_labels = {}  # Dizionario per tenere traccia delle label dei premi
+
+        # Divisione premi in due colonne ordinate
+        sorted_premi = sorted(premi)
+        mid = len(sorted_premi) // 2
+        left_premi = sorted_premi[:mid]
+        right_premi = sorted_premi[mid:]
+
+        # Funzione per creare etichette
+        def create_prize_label(parent, prize):
+            if prize >= 5000:
+                bg = "#e74c3c"  # rosso
+                fg = "white"
+            elif prize <= 500:
+                bg = "#3498db"  # blu
+                fg = "white"
+            else:
+                bg = "#95a5a6"  # grigio
+                fg = "black"
+
+            label = tk.Label(parent, text=f"{prize:,.0f} €", font=("Helvetica", 12, "bold"), width=12,
+                             bg=bg, fg=fg, pady=4, relief="groove", bd=1)
+            label.pack(pady=2)
+            self.prize_labels[prize] = label
+
+        # Aggiunta etichette a sinistra e destra
+        for prize in left_premi:
+            create_prize_label(self.left_column, prize)
+        for prize in right_premi:
+            create_prize_label(self.right_column, prize)
+
+        # Creazione pulsante per uscire dal gioco
+        self.quit_button = tk.Button(root, text="Termina Gioco", command=self.end_game, font=("Helvetica", 14, "bold"))
+        self.quit_button.pack(pady=20)
+
+    # Creazione funzione per creare i 20 pacchi
+    def create_package_buttons(self):
+        for i in range(n_pacchi):
+            # Ingrandimento delle dimensioni dei pulsanti dei pacchi
+            btn = tk.Button(self.grid_frame, text=str(i + 1), width=10, height=3,  # Larghezza 10 e altezza 4
+                            font=("Helvetica", 13, "bold"),
+                            bg="#ecf0f1", fg="#2c3e50",
+                            command=lambda n=i + 1: self.package_clicked(n))
+            btn.grid(row=i // 5, column=i % 5, padx=10, pady=10)  # Più padding per maggiore spazio
+            self.package_buttons[i + 1] = btn
+
+    # Funzione di saluto, utilizzando il nome fornito in input e mostrandolo in un popup
+    def first_print(self):
+        nome = self.entry.get()
+        if nome:
+            messagebox.showinfo("Ciao!", f"Ciao {nome}, sta per iniziare una nuova partita di Affari Tuoi! Le regole sono semplici: scegli il tuo pacco e apri quelli rimanenti, ma stai attento al pericolosissimo Dottore! ADESSO SONO AFFARI TUOI!")
+
+    # Funzione per aprire i pacchi
+    def package_clicked(self, number):
+        if self.player_package is None:
+            self.player_package = number
+            self.package_buttons[number].config(state="disabled", text=f"Tuo\n{number}", bg="#f1c40f", fg="black")
+            self.info_label.config(text="Inizia ad aprire i pacchi!")
+            self.packages.remove(number)
+        else:
+            if number in self.opened_packages or number == self.player_package:
+                return
+            premi = self.package_prize[number]
+            self.remaining_prizes.remove(premi)
+
+            # Colori: rossi >= 5000, blu <= 500, altrimenti grigio
+            if premi >= 5000:
+                bg_color = "#e74c3c"  # rosso
+                fg_color = "white"
+            elif premi <= 500:
+                bg_color = "#3498db"  # blu
+                fg_color = "white"
+            else:
+                bg_color = "#bdc3c7"  # grigio
+                fg_color = "#2c3e50"
+
+            # Configurazione definitiva del pacco
+            self.package_buttons[number].config(
+                state="disabled",
+                text=f"{premi:,.2f} €",
+                bg=bg_color,
+                fg=fg_color
+            )
+
+            self.opened_packages.append(number)
+            self.turn += 1
+
+            # Aggiorna il tabellone visivamente
+            label = self.prize_labels.get(premi)
+            if label:
+                label.config(fg="gray", bg="#dcdcdc", font=("Helvetica", 12, "overstrike"))
+
+            # Creazione del Dottore: ogni 3 pacchi ti arriverà un'offerta
+            if self.turn % 3 == 0 and len(self.packages) - len(self.opened_packages) > 1:
+                self.offer_from_doctor()
+
+    # Funzione con cui il Dottore calcola l'offerta e la mostra
+    def offer_from_doctor(self):
+        avg = sum(self.remaining_prizes) / len(self.remaining_prizes)  # Calcola la media dei premi rimanenti
+        offer = round(avg * random.uniform(0.6, 0.85), 2)  # Calcola l'offerta del Dottore
+        offer_approximated = round(offer / 1000) * 1000  # Arrotonda l'offerta a migliaia
+
+        response = messagebox.askyesno("📞 Offerta del Dottore", f"💼 Il Dottore ti offre: {offer_approximated:,.0f} €\nAccetti l'offerta?")
+        if response:  # Se il giocatore accetta l'offerta
+            self.reveal_final(accepted_offer=offer_approximated)
+
+    # Funzione per il cambio del pacco
+    def change_package(self):
+        if self.player_package is None:
+            messagebox.showinfo("Attenzione", "Devi prima scegliere il tuo pacco!")
+            return
+
+        if self.package_switched:
+            messagebox.showinfo("Cambio non disponibile", "Hai già cambiato pacco una volta!")
+            return
+
+        disponibili = [p for p in self.packages if p not in self.opened_packages and p != self.player_package]
+        if not disponibili:
+            messagebox.showinfo("Nessun pacco disponibile", "Non ci sono pacchi disponibili per il cambio.")
+            return
+
+        nuovo = simpledialog.askinteger("Cambio pacco", f"Quale pacco vuoi scegliere tra: {disponibili}?")
+        if nuovo in disponibili:
+            old = self.player_package
+            self.player_package = nuovo
+            self.package_buttons[old].config(state="normal", text=str(old), bg="#ecf0f1", fg="#2c3e50")
+            self.package_buttons[nuovo].config(state="disabled", text=f"Tuo\n{nuovo}", bg="#f1c40f", fg="black")
+            self.package_switched = True
+            messagebox.showinfo("Cambio effettuato", f"Hai cambiato il tuo pacco. Ora il tuo pacco è il numero {nuovo}!")
+
+    # Funzione per la rivelazione del premio
+    def end_game(self):
+        self.reveal_final()
+
+    # Funzione che rivela il premio finale, mostrando cosa avevi vinto davvero
+    def reveal_final(self, accepted_offer=None):
+        actual_prize = self.package_prize[self.player_package]
+        if accepted_offer is not None:
+            msg = f"Hai accettato l'offerta di {accepted_offer:,.0f} €.\n" \
+                  f"Il tuo pacco conteneva: {actual_prize:,.2f} €."
+        else:
+            msg = f"Fine del gioco!\nIl tuo pacco conteneva: {actual_prize:,.2f} €."
+        messagebox.showinfo("🎉 Risultato finale", msg)
+        self.root.destroy()
+
+# Avvio del gioco
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = AffariTuoiGame(root)
+    root.mainloop()
+</pre>
+    </div>
+
+    <div class="section">
+      <h2>Considerazioni Finali</h2>
+      <p>
+        Il lavoro svolto mi ha permesso di migliorare le mie competenze in ambito informatico, sviluppando capacità di analisi e progettazione, così da riuscire ad affrontare diverse sfide tecniche in modo efficace, inoltre mi ha fatto comprendere quanto il lavoro del programmatore sia difficile, ma allo stesso tempo, bello e gratificante, soprattutto quando vedi il risultato di ore e righe di codice. <br>
+        Sono soddisfatto del risultato ottenuto e sono pronto a migliorare, così da offrire delle esperienze migliori.
+      </p>
+    </div>
+
+  </div>
+
+  </div>
+
+  <footer>
+    &copy; 2025 - Il mio progetto | Tutti i diritti riservati
+  </footer>
+
+</body>
+</html>
